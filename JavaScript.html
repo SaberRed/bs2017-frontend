@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <pre><script>
+            // 在這裡填入你的 JavaScript 的測試程式
+            // document.writeln() 類似 C# 的 Console.WriteLine()
+            // prompt() 類似 C# 的 Console.ReadLine()
+
+            // var a = 1;
+            // var b = 2;
+
+            // document.writeln(a + b);
+
+            // var userInput = prompt("請輸入數值：", 123);
+
+            // document.writeln(userInput);
+
+            // 溫度轉換
+            // var tempc = prompt("請輸入攝氏溫度");
+
+            // var tempf = (tempc * 1.8) + 32;
+
+            // document.writeln("攝氏" + tempc + "度, 等於華氏" + tempf + "度");
+
+            //var object1 = {};
+            //var object2 = new Object();
+            // 兩個都是建立沒有屬性的 javaScript 物件
+
+            // 印出兩行數字
+            // var guessRecord = {
+            //     "userAnswer": "1234",
+            //     "correct": "1A1B"};
+
+            // for (var i=2; i<10; i++){
+            //     for (var j=1; j<10; j++){
+            //         var result = i * j;
+            //         document.writeln(i + "x" + j + " = " + result);
+            //     }
+            //     document.writeln("");
+            // }
+
+            // 印出3行名字
+            // var x = {
+            //     lastName: "Hello",
+            //     firstName: "Kitty",
+            //     gender: "Female"
+            // }
+
+            // for (var prop in x)
+            // {
+            //     var value = x[prop];
+
+            //     document.writeln("屬性" + prop + " = " + value);
+            // }
+
+            // 猜亂數 --> 5
+            // var run = true;
+            // var count = 0;
+
+            // while (run){
+            //     var r = Math.floor(Math.random() * 10);
+            //     count += 1;
+
+            //     document.writeln("執行" + count + "次: 取出亂數" + r);
+
+            //     if (r == 5){
+            //         run = false;
+            //     }
+            // }
+
+            // 0~9 猜數字
+            // var num = Math.floor(Math.random() * 10),
+            //     play = true,
+            //     guess = "";
+
+            //     while (play){
+            //         guess = prompt("您猜多少呢", guess);
+
+            //         if (guess == num){
+            //            document.writeln("猜對啦!答案是 "  + num);
+            //            play = false;
+            //         }
+            //     }
+
+            
+        </script></pre>
+
+    <!--<style>
+        //大標題溫度轉換
+        h1 {
+
+            color: red;
+            background: blue;
+        }
+    </style>
+
+    <body>
+        <div id="result"></div>
+
+        <script>
+            var tempc = prompt("請輸入攝氏溫度");
+
+            var tempf = (tempc * 1.8) + 32;
+
+            var text = ("攝氏" + tempc + "度, 等於華氏" + tempf + "度");
+
+            var strong = document.createElement("h1");
+            strong.innerHTML = text;
+
+            document.getElementById("result").appendChild(strong); //appendChild() 加入CSS效果
+        <!--</script>-->
+    <!--</body>-->
+
+    <!--九九乘法表-->
+    <!--<body>
+        九九乘法表 :
+        <div id="result"></div>
+
+        <script>
+            for (var i = 2; i < 10; i++) {
+                for (var j = 1; j < 10; j++) {
+                    var result = i * j;
+                    var div = document.createElement("div")
+                    div.innerHTML = "<em>" + i + "</em> x <em>" + j + "</em> = <em>" + result + "</em>";
+                    document.getElementById("result").appendChild(div);
+                }
+            }
+        </script>
+    </body>-->
+
+<!--加 button 溫度轉換-->
+    <!--<style>
+    strong {
+        color: red;
+    }
+</style>
+
+<body>
+    計算結果為 :
+    <div id="result"></div>
+    <button id="show" onclick="doCalculate();">顯示結果</button>
+
+    <script>
+        function doCalculate(){
+        var tempc = prompt("請輸入攝氏溫度");
+
+        var tempf = (tempc * 1.8) + 32;
+
+        var text = ("攝氏" + tempc + "度, 等於華氏" + tempf + "度");
+
+        var strong = document.createElement("strong");
+        strong.innerHTML = text;
+        
+        document.getElementById("result").appendChild(strong);
+        }
+    </script>
+</body>-->
+</body>
+
+</html>

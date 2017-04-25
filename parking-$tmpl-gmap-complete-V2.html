@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Youbike 站點查詢</title>
+  <!-- Bootstrap core CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom styles for this template -->
+  <link href="stylesheets/dashboard.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+          aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        <a class="navbar-brand" href="#">Project name</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#">Dashboard</a></li>
+          <li><a href="#">Settings</a></li>
+          <li><a href="#">Profile</a></li>
+          <li><a href="#">Help</a></li>
+        </ul>
+        <form class="navbar-form navbar-right">
+          <input type="text" class="form-control" placeholder="Search...">
+        </form>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-3 col-md-2 sidebar">
+        <ul class="nav nav-sidebar">
+          <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+          <li><a href="#">Reports</a></li>
+          <li><a href="#">Analytics</a></li>
+          <li><a href="#">Export</a></li>
+        </ul>
+        <ul class="nav nav-sidebar">
+          <li><a href="">Nav item</a></li>
+          <li><a href="">Nav item again</a></li>
+          <li><a href="">One more nav</a></li>
+          <li><a href="">Another nav item</a></li>
+          <li><a href="">More navigation</a></li>
+        </ul>
+        <ul class="nav nav-sidebar">
+          <li><a href="">Nav item again</a></li>
+          <li><a href="">One more nav</a></li>
+          <li><a href="">Another nav item</a></li>
+        </ul>
+      </div>
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+        <h2>停車資訊 <span class="label label-info">lite</span></h2>
+
+        <div class="row">
+
+          <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+            <div id="areas" class="btn-group-vertical btn-block">
+              <!--區域-->
+            </div>
+          </div>
+
+
+          <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
+            
+            <div id="parkingLots" class="row">
+              <!--停車場-->
+            </div>
+            
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <script id="parkingLot-tmpl" type="text/x-jquery-tmpl">
+    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 parkingLot">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">${parkName}</h3>
+        </div>
+        <div class="panel-body">
+          <p>${introduction}</p>
+          <p>${payGuide}</p>
+          <a class="address" 
+             href="https://www.google.com.tw/maps/?q=${wgsY},${wgsX}" target="_blank">${address}</a>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script>
+    $(function () {
+        var $areas = $("#areas"),
+            $parkingLots = $("#parkingLots");
+
+        // 利用 AJAX 取得區域資料
+        $.ajax({
+          type: "GET", 
+          url: "http://buildschool-chu.azurewebsites.net/youbike/district",
+          data: null,
+          dataType: "jsonp",
+          success: function (result, status, xhr) {
+            
+            // 清空原來列表中的區域資料
+            $areas.empty();
+
+            // 清空原來時刻表列表中的停車場資料
+            $parkingLots.empty();
+              
+            // $(result).each(function (i, item) { ... })
+            //
+            // 同下，但是更加簡單
+            //
+            // for (var i = 0; i < result.length; i++) {
+            //   var item = result[i];
+            //   ...
+            // }
+            // 
+            // 將每一個區域產生一個 <a class="btn btn-default"></a> 按鈕，並帶入相關資料
+            $(result).each(function (i, areaName) {
+              $("<a></a>")
+                .attr("href", "#")
+                .data("area", areaName)
+                .text(areaName)
+                .addClass("btn")
+                .addClass("btn-default")
+                .appendTo($areas);
+            });
+          }
+        });
+
+        // 傾聽區域中所有按鈕的點擊事件
+        $areas
+          .on("click", "a.btn", function (event) {
+            // 注意 this 會是被點擊的對象
+            var $a = $(this),
+                areaName = $a.data("area");
+            
+            // 視覺控制
+            $a.addClass("btn-primary")            // 點擊的按鈕變色
+              .siblings("a.btn-primary")          // 尋找到之前被點擊變色的按鈕
+              .removeClass("btn-primary");        // 恢復原狀態(不變色)
+
+            // 清空原來時刻表列表中的停車場資料
+            $parkingLots.empty();
+
+            // 利用 AJAX 取得停車場資料
+            $.ajax({
+              type: "GET",
+              url: "http://buildschool-chu.azurewebsites.net/youbike/index",
+              data: { "area": areaName },
+              dataType: "jsonp",
+              success: function (result, status, xhr) {
+                $(result).each(function (i, item) {
+                  // 顯示停車場資料
+                  $("#parkingLot-tmpl")
+                    // 樣板套用來源資料
+                    .tmpl(item)
+                    // 寄放資料
+                    .data("json", item)
+                    .appendTo($parkingLots);
+                }); 
+              }
+            });
+
+            // 阻止瀏覽器原生的 a 點擊行為（前往連結）
+            return false;
+          });
+
+        $parkingLots
+          .on("click", "a.address", function (event) {
+            var $a = $(this),
+                // 取得停車場的 DOM 物件
+                $parkingLot = $a.parents(".parkingLot"),
+                // 取出寄放的資料
+                parkingLot = $parkingLot.data("json");
+
+            // 移除先前的地圖
+            $("#parkingLotMap").remove();
+
+            // 顯示地圖
+            $("<iframe></iframe>")
+                .attr("id", "parkingLotMap")
+                .attr("width", "100%")
+                .attr("height", 300)
+                .attr("frameBorder", 0)
+                .attr("src", "https://www.google.com/maps/embed/v1/place?key=AIzaSyBJADoRetu48862wwZAykrCrUmO3gOGI90&q=" + parkingLot.wgsY + "," + parkingLot.wgsX)
+                .prependTo($parkingLots);
+
+            // 申請 Google API key
+            // https://developers.google.com/maps/documentation/embed/guide?hl=zh-tw
+
+            return false;
+          });
+    });
+
+    [{"_id":"292","iid":"723","sv":"1","sd":"20150323161853","vtyp":"1","sno":"1097","sna":"板橋國民運動中心","sip":"","tot":"44","sbi":"0","sarea":"板橋區","mday":"20151012003933","lat":"25.022235","lng":"121.458152","ar":"英士路/智樂路","sareaen":"Banqiao Dist.","snaen":"Banqiao Civil Sports Center","aren":"Yingshi Rd./Jhihle Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"293","iid":"724","sv":"1","sd":"20150323162327","vtyp":"1","sno":"1098","sna":"永安公園","sip":"","tot":"38","sbi":"0","sarea":"板橋區","mday":"20151012003941","lat":"25.024786","lng":"121.477397","ar":"雙十路一段25號前人行道","sareaen":"Banqiao Dist.","snaen":"Yongan Park","aren":"No.25, Sec. 1, Shuangshi Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"294","iid":"725","sv":"1","sd":"20150323162542","vtyp":"1","sno":"1099","sna":"捷運江子翠站(3號出口)","sip":"","tot":"44","sbi":"0","sarea":"板橋區","mday":"20151012003935","lat":"25.029729","lng":"121.472359","ar":"文化路二段/雙十路二段","sareaen":"Banqiao Dist.","snaen":"MRT Jiangzicui Sta.(Exit 3)","aren":"Sec. 2, Wenhua Rd./Sec. 2, Shuangshi Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"295","iid":"726","sv":"1","sd":"20150323163041","vtyp":"1","sno":"1100","sna":"音樂公園","sip":"","tot":"48","sbi":"0","sarea":"板橋區","mday":"20151012003925","lat":"25.028631","lng":"121.480460","ar":"大同街97號對面公園人行道","sareaen":"Banqiao Dist.","snaen":"Yinyue Park","aren":"No.97, Datong St.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"298","iid":"729","sv":"1","sd":"20150401094903","vtyp":"1","sno":"1103","sna":"捷運新埔站(2號出口)","sip":"","tot":"22","sbi":"0","sarea":"板橋區","mday":"20151012003939","lat":"25.022095","lng":"121.467598","ar":"文化路一段318號旁廣場","sareaen":"Banqiao Dist.","snaen":"MRT Xinpu Sta.(Exit.2)","aren":"No.318, Sec. 1, Wenhua Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"299","iid":"730","sv":"1","sd":"20150401095109","vtyp":"1","sno":"1104","sna":"聯合醫院板橋院區","sip":"","tot":"34","sbi":"0","sarea":"板橋區","mday":"20151012003941","lat":"25.023832","lng":"121.457773","ar":"龍泉街131號旁人行道(立體停車場前)","sareaen":"Banqiao Dist.","snaen":"New Taipei City Hospital Banqiao Branch","aren":"No.131, Longquan St.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"300","iid":"731","sv":"1","sd":"20150401095902","vtyp":"1","sno":"1105","sna":"捷運板橋站(3號出口)","sip":"","tot":"68","sbi":"0","sarea":"板橋區","mday":"20151012003938","lat":"25.014797","lng":"121.462051","ar":"文化路一段117號對面人行道","sareaen":"Banqiao Dist.","snaen":"MRT Banqiao Sta.(Exit.3)","aren":"No.117, Sec. 1, Wenhua Rd. (opposite)","nbcnt":"0","bemp":"0","act":"0"},{"_id":"301","iid":"732","sv":"1","sd":"20150401100026","vtyp":"1","sno":"1106","sna":"民生公園","sip":"","tot":"42","sbi":"0","sarea":"板橋區","mday":"20151012003933","lat":"25.013087","lng":"121.475894","ar":"民生路一段/民生路一段30巷","sareaen":"Banqiao Dist.","snaen":"Minsheng Park","aren":"Sec. 1, Minsheng Rd./Ln. 30, Sec. 1, Minsheng Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"302","iid":"733","sv":"1","sd":"20150401100153","vtyp":"1","sno":"1107","sna":"新北市政府","sip":"","tot":"40","sbi":"0","sarea":"板橋區","mday":"20151012003931","lat":"25.012374","lng":"121.464224","ar":"新府路1號對面人行道","sareaen":"Banqiao Dist.","snaen":"New Taipei City Hall","aren":"No.1, Xinfu Rd. (opposite)","nbcnt":"0","bemp":"0","act":"0"},{"_id":"303","iid":"734","sv":"1","sd":"20150401100259","vtyp":"1","sno":"1108","sna":"捷運板橋站(1號出口)","sip":"","tot":"90","sbi":"0","sarea":"板橋區","mday":"20151012003930","lat":"25.013174","lng":"121.461900","ar":"縣民大道二段3號(秀泰影城門口)","sareaen":"Banqiao Dist.","snaen":"MRT Banqiao Sta.(Exit.1)","aren":"No.3, Sec. 2, Xianmin Blvd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"304","iid":"736","sv":"1","sd":"20150408152744","vtyp":"1","sno":"1109","sna":"板橋地政事務所","sip":"","tot":"52","sbi":"0","sarea":"板橋區","mday":"20151012003915","lat":"25.007983","lng":"121.463387","ar":"實踐路5號對面","sareaen":"Banqiao Dist.","snaen":"Banqiao Land Office","aren":"No.5, Shijian Rd. (opposite)","nbcnt":"0","bemp":"0","act":"0"},{"_id":"305","iid":"737","sv":"1","sd":"20150408152907","vtyp":"1","sno":"1110","sna":"板橋戶政事務所","sip":"","tot":"44","sbi":"0","sarea":"板橋區","mday":"20151012003913","lat":"25.012839","lng":"121.456308","ar":"中正路6號前人行道","sareaen":"Banqiao Dist.","snaen":"Banqiao District Household Registration Office","aren":"No.6, Zhongzheng Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"306","iid":"738","sv":"1","sd":"20150408153135","vtyp":"1","sno":"1111","sna":"板橋和平公園","sip":"","tot":"40","sbi":"0","sarea":"板橋區","mday":"20151012003913","lat":"24.997679","lng":"121.464326","ar":"重慶路355號前廣場","sareaen":"Banqiao Dist.","snaen":"Banqiao Heping Park","aren":"No.355, Chongqing Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"312","iid":"744","sv":"1","sd":"20150410145339","vtyp":"1","sno":"1117","sna":"捷運府中站(3號出口)","sip":"","tot":"42","sbi":"0","sarea":"板橋區","mday":"20151012003923","lat":"25.008999","lng":"121.458776","ar":"府中路31號至53號對面","sareaen":"Banqiao Dist.","snaen":"MRT Fuzhong Sta.(Exit.3)","aren":"","nbcnt":"0","bemp":"0","act":"0"},{"_id":"313","iid":"745","sv":"1","sd":"20150410145442","vtyp":"1","sno":"1118","sna":"捷運亞東醫院站(2號出口)","sip":"","tot":"52","sbi":"0","sarea":"板橋區","mday":"20151012003936","lat":"24.997830","lng":"121.452315","ar":"南雅南路二段122-23號‎前人行道","sareaen":"Banqiao Dist.","snaen":"MRT Far Eastern Hospital Sta.(Exit.2)","aren":"No.122-23, Sec. 2, Nanya S. Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"322","iid":"755","sv":"1","sd":"20150427123748","vtyp":"1","sno":"1127","sna":"新北市立圖書館總館","sip":"","tot":"36","sbi":"0","sarea":"板橋區","mday":"20151012003931","lat":"25.001583","lng":"121.455524","ar":"貴興路119巷","sareaen":"Banqiao Dist.","snaen":"New Taipei City Library","aren":"Ln. 119, Guixing Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"329","iid":"765","sv":"1","sd":"20150518134117","vtyp":"1","sno":"1135","sna":"莊敬公園","sip":"","tot":"38","sbi":"0","sarea":"板橋區","mday":"20151012003917","lat":"25.020983","lng":"121.470821","ar":"萬板路/民生路二段","sareaen":"Banqiao Dist.","snaen":"Zhuangjing Park","aren":"Wanban Rd./Sec. 2, Minsheng Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"330","iid":"767","sv":"1","sd":"20150520094316","vtyp":"1","sno":"1137","sna":"新海長江路口","sip":"","tot":"36","sbi":"0","sarea":"板橋區","mday":"20151012003922","lat":"25.02853","lng":"121.457367","ar":"長江路一段/新海路","sareaen":"Banqiao Dist.","snaen":"Xinhai & Changjiang Intersection","aren":"Sec. 1, Changjiang Rd./Xinhai Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"331","iid":"769","sv":"1","sd":"20150525173725","vtyp":"1","sno":"1138","sna":"捷運新埔站(4號出口)","sip":"","tot":"50","sbi":"0","sarea":"板橋區","mday":"20151012003919","lat":"25.023491","lng":"121.468559","ar":"民生路二段250號前人行道","sareaen":"Banqiao Dist.","snaen":"MRT Xinpu Sta.(Exit.4)","aren":"No.250, Sec. 2, Minsheng Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"332","iid":"770","sv":"1","sd":"20150525173848","vtyp":"1","sno":"1139","sna":"板橋仁愛公園","sip":"","tot":"34","sbi":"0","sarea":"板橋區","mday":"20151012003933","lat":"24.996430","lng":"121.459696","ar":"國慶路49巷23號對面","sareaen":"Banqiao Dist.","snaen":"Banqiao Renai Park","aren":"Aly. 23, Ln. 49, Guoqing Rd. (opposite)","nbcnt":"0","bemp":"0","act":"0"},{"_id":"334","iid":"774","sv":"1","sd":"20150527091751","vtyp":"1","sno":"1143","sna":"廣福公園","sip":"","tot":"38","sbi":"0","sarea":"板橋區","mday":"20151012003936","lat":"24.991643","lng":"121.462872","ar":"廣權路/廣和街","sareaen":"Banqiao Dist.","snaen":"Guangfu Park","aren":"Guangquan Rd./Guanghe St.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"335","iid":"775","sv":"1","sd":"20150527091901","vtyp":"1","sno":"1144","sna":"板橋四維公園","sip":"","tot":"54","sbi":"0","sarea":"板橋區","mday":"20151012003929","lat":"25.025464","lng":"121.462633","ar":"陽明街251號至259號對面人行道","sareaen":"Banqiao Dist.","snaen":"Banqiao Siwei Park","aren":"No.251 to No.259, Yangming St. (opposite)","nbcnt":"0","bemp":"0","act":"0"},{"_id":"340","iid":"780","sv":"1","sd":"20150528171404","vtyp":"1","sno":"1149","sna":"華德公園","sip":"","tot":"38","sbi":"0","sarea":"板橋區","mday":"20151012003915","lat":"24.991683","lng":"121.453320","ar":"四川路二段245巷60號對面","sareaen":"Banqiao Dist.","snaen":"Huade Park","aren":"No.60, Ln. 245, Sec. 2, Sichuan Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"342","iid":"782","sv":"1","sd":"20150528171614","vtyp":"1","sno":"1151","sna":"中山國中","sip":"","tot":"38","sbi":"0","sarea":"板橋區","mday":"20151012003945","lat":"25.018559","lng":"121.467509","ar":"文化路一段188巷56號","sareaen":"Banqiao Dist.","snaen":"Zhong Shan Junior High School","aren":"No.56, Ln. 188, Sec. 1, Wenhua Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"344","iid":"784","sv":"1","sd":"20150604103209","vtyp":"1","sno":"1153","sna":"四川遠東路口","sip":"","tot":"48","sbi":"0","sarea":"板橋區","mday":"20151012003932","lat":"24.998003","lng":"121.457355","ar":"遠東路5號前人行道(四川路側)","sareaen":"Banqiao Dist.","snaen":"Sichuan & Yuandong Intersection","aren":"No.5, Yuandong Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"352","iid":"795","sv":"1","sd":"20150615161546","vtyp":"1","sno":"1164","sna":"國光里(國光路)","sip":"","tot":"34","sbi":"0","sarea":"板橋區","mday":"20151012003938","lat":"25.017755","lng":"121.458308","ar":"國光路76號旁","sareaen":"Banqiao Dist.","snaen":"Guoguang Village (Guoguang Rd.)","aren":"No.76, Guoguang Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"353","iid":"796","sv":"1","sd":"20150615161650","vtyp":"1","sno":"1165","sna":"民生長江路口","sip":"","tot":"36","sbi":"0","sarea":"板橋區","mday":"20151012003919","lat":"25.030904","lng":"121.463596","ar":"民生路三段/長江路一段(64高架橋下方)","sareaen":"Banqiao Dist.","snaen":"Minsheng & Changjiang Intersection","aren":"Sec. 3, Minsheng Rd./Sec. 1, Changjiang Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"355","iid":"843","sv":"1","sd":"20150811080907","vtyp":"1","sno":"1167","sna":"浮洲合宜住宅(合安一路)","sip":"","tot":"34","sbi":"0","sarea":"板橋區","mday":"20151012003923","lat":"24.999329","lng":"121.446343","ar":"合安一路/大觀路二段153巷","sareaen":"Banqiao Dist.","snaen":"Fujhou Appropriate House ( He-an 1st. Road )","aren":"1st Rd./Ln. 153, Sec. 2, Daguan Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"358","iid":"804","sv":"1","sd":"20150626102630","vtyp":"1","sno":"1171","sna":"國光公園","sip":"","tot":"36","sbi":"0","sarea":"板橋區","mday":"20151012003926","lat":"25.019828","lng":"121.453852","ar":"中正路325巷/中正路341巷","sareaen":"Banqiao Dist.","snaen":"Guoguang Park","aren":"Ln. 325, Zhongzheng Rd./Ln. 341, Zhongzheng Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"361","iid":"808","sv":"1","sd":"20150626103241","vtyp":"1","sno":"1175","sna":"板橋福德公園","sip":"","tot":"32","sbi":"0","sarea":"板橋區","mday":"20151012003923","lat":"25.011498","lng":"121.467415","ar":"新站路1號對面","sareaen":"Banqiao Dist.","snaen":"Banqiao Fude Park","aren":"No.1, Xinzhan Rd. (opposite)","nbcnt":"0","bemp":"0","act":"0"},{"_id":"366","iid":"814","sv":"1","sd":"20150708180536","vtyp":"1","sno":"1181","sna":"板林溪北路口","sip":"","tot":"46","sbi":"0","sarea":"板橋區","mday":"20151012003915","lat":"24.990555","lng":"121.426350","ar":"板林路/溪北路","sareaen":"Banqiao Dist.","snaen":"Banlin & Xibei Intersection","aren":"Banlin Rd./Xibei Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"367","iid":"815","sv":"1","sd":"20150708180641","vtyp":"1","sno":"1182","sna":"新北市藝文中心","sip":"","tot":"42","sbi":"0","sarea":"板橋區","mday":"20151012003919","lat":"25.026542","lng":"121.472279","ar":"莊敬路/文化路2段182巷","sareaen":"Banqiao Dist.","snaen":"New Taipei City Art Center","aren":"Zhuangjing Rd./Ln. 182, Sec. 2, Wenhua Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"372","iid":"821","sv":"1","sd":"20150715090643","vtyp":"1","sno":"1188","sna":"溪洲公園停車場","sip":"","tot":"36","sbi":"0","sarea":"板橋區","mday":"20151012003941","lat":"24.986723","lng":"121.426820","ar":"溪崑二街145號","sareaen":"Banqiao Dist.","snaen":"Xizhou Park","aren":"No.145, Xikun 2nd St.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"373","iid":"822","sv":"1","sd":"20150715091153","vtyp":"1","sno":"1189","sna":"崑崙公園","sip":"","tot":"38","sbi":"0","sarea":"板橋區","mday":"20151012003918","lat":"24.993406","lng":"121.429636","ar":"大觀路三段212巷70號對面","sareaen":"Banqiao Dist.","snaen":"Kunlun Park","aren":"No.70, Aly. 212, Sec. 3, Daguan Rd. (opposite)","nbcnt":"0","bemp":"0","act":"0"},{"_id":"376","iid":"825","sv":"1","sd":"20150727085300","vtyp":"1","sno":"1192","sna":"潤泰社區","sip":"","tot":"36","sbi":"0","sarea":"板橋區","mday":"20151012003916","lat":"25.017953","lng":"121.479375","ar":"板橋區三民路二段35巷口","sareaen":"Banqiao Dist.","snaen":"Runtai Community","aren":"Ln. 35, Sec. 2, Sanmin Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"377","iid":"828","sv":"1","sd":"20150727085829","vtyp":"1","sno":"1195","sna":"板橋國中","sip":"","tot":"54","sbi":"0","sarea":"板橋區","mday":"20151012003941","lat":"25.024903","lng":"121.454310","ar":"中正路441號前人行道","sareaen":"Banqiao Dist.","snaen":"Banqiao Junior High School","aren":"No.441, Zhongzheng Rd.","nbcnt":"0","bemp":"0","act":"0"},{"_id":"378","iid":"829","sv":"1","sd":"20150727085922","vtyp":"1","sno":"1196","sna":"永豐公園活動中心","sip":"","tot":"32","sbi":"0","sarea":"板橋區","mday":"20151012003935","lat":"25.021127","lng":"121.476853","ar":"板橋區永豐街221號","sareaen":"Banqiao Dist.","snaen":"Yongfeng  Park Activity Center","aren":"No.221, Yongfeng St.","nbcnt":"0","bemp":"0","act":"0"}]
+  </script>
+</body>
+</html>
